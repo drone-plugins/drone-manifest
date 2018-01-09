@@ -1,0 +1,144 @@
+workspace:
+  base: /go
+  path: src/github.com/drone-plugins/drone-manifest
+
+pipeline:
+  test:
+    image: golang:1.9
+    pull: true
+    commands:
+      - go vet
+      - |
+        for PKG in $(go list ./... | grep -v /vendor/); do
+          go test -cover -coverprofile $GOPATH/src/$PKG/coverage.out $PKG
+        done
+
+  build_linux_amd64:
+    image: golang:1.9
+    pull: true
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=amd64
+      - CGO_ENABLED=0
+    commands:
+      - |
+        if test "${DRONE_TAG}" = ""; then
+          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/drone-manifest
+        else
+          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/drone-manifest
+        fi
+
+  build_linux_i386:
+    image: golang:1.9
+    pull: true
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=386
+      - CGO_ENABLED=0
+    commands:
+      - |
+        if test "${DRONE_TAG}" = ""; then
+          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/i386/drone-manifest
+        else
+          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/i386/drone-manifest
+        fi
+
+  build_linux_arm:
+    image: golang:1.9
+    pull: true
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=arm
+      - CGO_ENABLED=0
+      - GOARM=7
+    commands:
+      - |
+        if test "${DRONE_TAG}" = ""; then
+          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm/drone-manifest
+        else
+          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm/drone-manifest
+        fi
+
+  build_linux_arm64:
+    image: golang:1.9
+    pull: true
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=arm64
+      - CGO_ENABLED=0
+    commands:
+      - |
+        if test "${DRONE_TAG}" = ""; then
+          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm64/drone-manifest
+        else
+          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm64/drone-manifest
+        fi
+
+  publish_linux_amd64:
+    image: plugins/docker:17.05
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    group: docker
+    repo: plugins/manifest
+    auto_tag: true
+    auto_tag_suffix: amd64
+    dockerfile: Dockerfile
+    when:
+      event: [ push, tag ]
+
+  publish_linux_i386:
+    image: plugins/docker:17.05
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    group: docker
+    repo: plugins/manifest
+    auto_tag: true
+    auto_tag_suffix: i386
+    dockerfile: Dockerfile.i386
+    when:
+      event: [ push, tag ]
+
+  publish_linux_arm:
+    image: plugins/docker:17.05
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    group: docker
+    repo: plugins/manifest
+    auto_tag: true
+    auto_tag_suffix: arm
+    dockerfile: Dockerfile.arm
+    when:
+      event: [ push, tag ]
+
+  publish_linux_arm64:
+    image: plugins/docker:17.05
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    group: docker
+    repo: plugins/manifest
+    auto_tag: true
+    auto_tag_suffix: arm64
+    dockerfile: Dockerfile.arm64
+    when:
+      event: [ push, tag ]
+
+  manifests:
+    image: plugins/manifest:1
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    spec: manifest.tmpl
+    auto_tag: true
+    ignore_missing: true
+    when:
+      event: [ push, tag ]
+
+  microbadger:
+    image: plugins/webhook:1
+    pull: true
+    secrets: [ webhook_url ]
+    when:
+      status: [ success ]

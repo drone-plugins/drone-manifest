@@ -1,0 +1,16 @@
+# escape=`
+FROM microsoft/nanoserver:10.0.14393.1593
+
+ENV MANIFEST_VERSION 0.7.0
+ENV MANIFEST_URL https://github.com/estesp/manifest-tool/releases/download/v${MANIFEST_VERSION}/manifest-tool-windows-amd64.exe
+
+RUN powershell -Command $ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue'; `
+  Invoke-WebRequest -Uri $env:MANIFEST_URL -OutFile "C:\Windows\System32\manifest-tool.exe"
+
+LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `
+  org.label-schema.name="Drone Manifest" `
+  org.label-schema.vendor="Drone.IO Community" `
+  org.label-schema.schema-version="1.0"
+
+ADD drone-manifest.exe /drone-manifest.exe
+ENTRYPOINT [ "\\drone-manifest.exe" ]

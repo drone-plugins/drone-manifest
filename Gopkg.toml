@@ -1,0 +1,15 @@
+[[constraint]]
+  name = "github.com/aymerick/raymond"
+  version = "2.0.1"
+
+[[constraint]]
+  name = "github.com/coreos/go-semver"
+  version = "0.2.0"
+
+[[constraint]]
+  name = "github.com/pkg/errors"
+  version = "0.8.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/urfave/cli"
