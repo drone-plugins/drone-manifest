@@ -45,6 +45,22 @@ pipeline:
           go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/i386/drone-manifest
         fi
 
+  build_linux_arm64:
+    image: golang:1.9
+    pull: true
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=arm64
+      - CGO_ENABLED=0
+    commands:
+      - |
+        if test "${DRONE_TAG}" = ""; then
+          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm64/drone-manifest
+        else
+          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm64/drone-manifest
+        fi
+
   build_linux_arm:
     image: golang:1.9
     pull: true
@@ -62,22 +78,6 @@ pipeline:
           go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm/drone-manifest
         fi
 
-  build_linux_arm64:
-    image: golang:1.9
-    pull: true
-    group: build
-    environment:
-      - GOOS=linux
-      - GOARCH=arm64
-      - CGO_ENABLED=0
-    commands:
-      - |
-        if test "${DRONE_TAG}" = ""; then
-          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm64/drone-manifest
-        else
-          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm64/drone-manifest
-        fi
-
   publish_linux_amd64:
     image: plugins/docker:17.05
     pull: true
@@ -85,7 +85,7 @@ pipeline:
     group: docker
     repo: plugins/manifest
     auto_tag: true
-    auto_tag_suffix: amd64
+    auto_tag_suffix: linux-amd64
     dockerfile: Dockerfile
     when:
       event: [ push, tag ]
@@ -97,20 +97,8 @@ pipeline:
     group: docker
     repo: plugins/manifest
     auto_tag: true
-    auto_tag_suffix: i386
+    auto_tag_suffix: linux-i386
     dockerfile: Dockerfile.i386
-    when:
-      event: [ push, tag ]
-
-  publish_linux_arm:
-    image: plugins/docker:17.05
-    pull: true
-    secrets: [ docker_username, docker_password ]
-    group: docker
-    repo: plugins/manifest
-    auto_tag: true
-    auto_tag_suffix: arm
-    dockerfile: Dockerfile.arm
     when:
       event: [ push, tag ]
 
@@ -121,8 +109,20 @@ pipeline:
     group: docker
     repo: plugins/manifest
     auto_tag: true
-    auto_tag_suffix: arm64
+    auto_tag_suffix: linux-arm64
     dockerfile: Dockerfile.arm64
+    when:
+      event: [ push, tag ]
+
+  publish_linux_arm:
+    image: plugins/docker:17.05
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    group: docker
+    repo: plugins/manifest
+    auto_tag: true
+    auto_tag_suffix: linux-arm
+    dockerfile: Dockerfile.arm
     when:
       event: [ push, tag ]
 

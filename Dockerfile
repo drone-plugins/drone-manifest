@@ -1,10 +1,7 @@
 FROM alpine:3.6 as base
 
-ENV MANIFEST_VERSION 0.7.0
-ENV MANIFEST_URL https://github.com/estesp/manifest-tool/releases/download/v${MANIFEST_VERSION}/manifest-tool-linux-amd64
-
 RUN apk add --no-cache curl && \
-  curl -sSLo /bin/manifest-tool ${MANIFEST_URL} && \
+  curl -sSLo /bin/manifest-tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64 && \
   chmod +x /bin/manifest-tool
 
 FROM plugins/base:multiarch

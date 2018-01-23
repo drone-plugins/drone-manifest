@@ -26,11 +26,11 @@ build_script:
       }
 
       docker pull microsoft/nanoserver:10.0.14393.1593
-      docker build -f Dockerfile.windows -t plugins/manifest:windows .
+      docker build -f Dockerfile.windows -t plugins/manifest:windows-amd64 .
 
 test_script:
   - ps: |
-      docker run --rm plugins/manifest:windows --version
+      docker run --rm plugins/manifest:windows-amd64 --version
 
 deploy_script:
   - ps: |
@@ -47,16 +47,16 @@ deploy_script:
           docker push plugins/manifest:windows
 
           docker tag plugins/manifest:windows plugins/manifest:$major.$minor.$patch-windows
-          docker push plugins/manifest:$major.$minor.$patch-windows
+          docker push plugins/manifest:$major.$minor.$patch-windows-amd64
 
           docker tag plugins/manifest:windows plugins/manifest:$major.$minor-windows
-          docker push plugins/manifest:$major.$minor-windows
+          docker push plugins/manifest:$major.$minor-windows-amd64
 
           docker tag plugins/manifest:windows plugins/manifest:$major-windows
-          docker push plugins/manifest:$major-windows
+          docker push plugins/manifest:$major-windows-amd64
         } else {
           if ( $env:APPVEYOR_REPO_BRANCH -eq 'master' ) {
-            docker push plugins/manifest:windows
+            docker push plugins/manifest:windows-amd64
           }
         }
       }
