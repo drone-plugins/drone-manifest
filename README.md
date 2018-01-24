@@ -33,5 +33,7 @@ docker run --rm \
   -e PLUGIN_PLATFORMS=linux/amd64,linux/arm,linux/arm64 \
   -e PLUGIN_TEMPLATE=organization/project-ARCH:1.0.0 \
   -e PLUGIN_TARGET=organization/project:1.0.0 \
+  -v $(pwd):$(pwd) \
+  -w $(pwd) \
   plugins/manifest
 ```
