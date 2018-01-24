@@ -44,15 +44,15 @@ deploy_script:
         if ( $env:APPVEYOR_REPO_TAG -eq 'true' ) {
           $major,$minor,$patch = $env:APPVEYOR_REPO_TAG_NAME.substring(1).split('.')
 
-          docker push plugins/manifest:windows
+          docker push plugins/manifest:windows-amd64
 
-          docker tag plugins/manifest:windows plugins/manifest:$major.$minor.$patch-windows
+          docker tag plugins/manifest:windows-amd64 plugins/manifest:$major.$minor.$patch-windows
           docker push plugins/manifest:$major.$minor.$patch-windows-amd64
 
-          docker tag plugins/manifest:windows plugins/manifest:$major.$minor-windows
+          docker tag plugins/manifest:windows-amd64 plugins/manifest:$major.$minor-windows
           docker push plugins/manifest:$major.$minor-windows-amd64
 
-          docker tag plugins/manifest:windows plugins/manifest:$major-windows
+          docker tag plugins/manifest:windows-amd64 plugins/manifest:$major-windows
           docker push plugins/manifest:$major-windows-amd64
         } else {
           if ( $env:APPVEYOR_REPO_BRANCH -eq 'master' ) {
