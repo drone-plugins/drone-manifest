@@ -46,13 +46,13 @@ deploy_script:
 
           docker push plugins/manifest:windows-amd64
 
-          docker tag plugins/manifest:windows-amd64 plugins/manifest:$major.$minor.$patch-windows
+          docker tag plugins/manifest:windows-amd64 plugins/manifest:$major.$minor.$patch-windows-amd64
           docker push plugins/manifest:$major.$minor.$patch-windows-amd64
 
-          docker tag plugins/manifest:windows-amd64 plugins/manifest:$major.$minor-windows
+          docker tag plugins/manifest:windows-amd64 plugins/manifest:$major.$minor-windows-amd64
           docker push plugins/manifest:$major.$minor-windows-amd64
 
-          docker tag plugins/manifest:windows-amd64 plugins/manifest:$major-windows
+          docker tag plugins/manifest:windows-amd64 plugins/manifest:$major-windows-amd64
           docker push plugins/manifest:$major-windows-amd64
         } else {
           if ( $env:APPVEYOR_REPO_BRANCH -eq 'master' ) {
