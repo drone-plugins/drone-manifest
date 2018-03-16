@@ -10,5 +10,5 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 
 RUN Invoke-WebRequest 'https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-windows-amd64.exe' -OutFile 'c:\Windows\System32\manifest-tool.exe';
 
-ADD drone-manifest.exe c:\drone-manifest.exe
+ADD release\drone-manifest.exe c:\drone-manifest.exe
 ENTRYPOINT [ "c:\\drone-manifest.exe" ]
