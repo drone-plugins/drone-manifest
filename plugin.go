@@ -38,10 +38,6 @@ type (
 		Started int64
 	}
 
-	Auto struct {
-		Tags []string
-	}
-
 	Config struct {
 		Username      string
 		Password      string
@@ -56,7 +52,6 @@ type (
 		Repo   Repo
 		Build  Build
 		Job    Job
-		Auto   Auto
 		Config Config
 	}
 )

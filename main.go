@@ -183,9 +183,6 @@ func run(c *cli.Context) error {
 		Job: Job{
 			Started: c.Int64("job.started"),
 		},
-		Auto: Auto{
-			Tags: []string{"1.0", "1"},
-		},
 		Config: Config{
 			Username:      c.String("username"),
 			Password:      c.String("password"),
