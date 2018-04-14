@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/drone/drone-template-lib/template"
 	"github.com/drone-plugins/drone-manifest/command"
 )
 
@@ -72,7 +73,7 @@ func (p *Plugin) Exec() error {
 	}
 
 	if p.Config.Spec != "" {
-		spec, err := RenderTrim(p.Config.Spec, p)
+		spec, err := template.RenderTrim(p.Config.Spec, p)
 
 		if err != nil {
 			return err

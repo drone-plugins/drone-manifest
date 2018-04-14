@@ -1,10 +1,14 @@
 [[constraint]]
   name = "github.com/aymerick/raymond"
-  version = "2.0.1"
+  version = "2.0.2"
 
 [[constraint]]
   name = "github.com/coreos/go-semver"
   version = "0.2.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/drone/drone-template-lib"
 
 [[constraint]]
   name = "github.com/pkg/errors"
@@ -13,3 +17,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/urfave/cli"
+
+[prune]
+  go-tests = true
+  unused-packages = true
