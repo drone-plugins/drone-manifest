@@ -3,15 +3,26 @@
 
 [[projects]]
   name = "github.com/aymerick/raymond"
-  packages = [".","ast","lexer","parser"]
-  revision = "a2232af10b53ef1ae5a767f5178db3a6c1dab655"
-  version = "v2.0.1"
+  packages = [
+    ".",
+    "ast",
+    "lexer",
+    "parser"
+  ]
+  revision = "2eebd0f5dd9564c0c6e439df11d8a3c7b9b9ab11"
+  version = "v2.0.2"
 
 [[projects]]
   name = "github.com/coreos/go-semver"
   packages = ["semver"]
   revision = "8ab6407b697782a06568d4b7f1db25550ec2e4c6"
   version = "v0.2.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/drone/drone-template-lib"
+  packages = ["template"]
+  revision = "5748d3149f4859c6d6cf43edb4fa35bba379c918"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -23,11 +34,11 @@
   branch = "master"
   name = "github.com/urfave/cli"
   packages = ["."]
-  revision = "75104e932ac2ddb944a6ea19d9f9f26316ff1145"
+  revision = "8e01ec4cd3e2d84ab2fe90d8210528ffbb06d8ff"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a89f1c3cf068c93fd8bf83840a119df2915c502193ca71a2b5ae4b6a6cfa4d70"
+  inputs-digest = "0fe5369d1efd31b54aea7d9c97316da432b06cf9a01e0a0c4a46ec4a5f148446"
   solver-name = "gps-cdcl"
   solver-version = 1

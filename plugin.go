@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/drone/drone-template-lib/template"
 	"github.com/drone-plugins/drone-manifest/command"
 )
 
@@ -38,10 +39,6 @@ type (
 		Started int64
 	}
 
-	Auto struct {
-		Tags []string
-	}
-
 	Config struct {
 		Username      string
 		Password      string
@@ -56,7 +53,6 @@ type (
 		Repo   Repo
 		Build  Build
 		Job    Job
-		Auto   Auto
 		Config Config
 	}
 )
@@ -77,7 +73,7 @@ func (p *Plugin) Exec() error {
 	}
 
 	if p.Config.Spec != "" {
-		spec, err := RenderTrim(p.Config.Spec, p)
+		spec, err := template.RenderTrim(p.Config.Spec, p)
 
 		if err != nil {
 			return err
