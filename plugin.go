@@ -1,12 +1,15 @@
 package main
 
 import (
-	"errors"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/drone/drone-template-lib/template"
-	"github.com/drone-plugins/drone-manifest/command"
+	"github.com/pkg/errors"
 )
 
 type (
@@ -58,28 +61,53 @@ type (
 )
 
 func (p *Plugin) Exec() error {
-	opts := make([]command.Option, 0)
+	args := []string{}
 
 	if p.Config.Username == "" {
 		return errors.New("you must provide a username")
 	} else {
-		opts = append(opts, command.WithUsername(p.Config.Username))
+		args = append(args, fmt.Sprintf("--username=%s", p.Config.Username))
 	}
 
 	if p.Config.Password == "" {
 		return errors.New("you must provide a password")
 	} else {
-		opts = append(opts, command.WithPassword(p.Config.Password))
+		args = append(args, fmt.Sprintf("--password=%s", p.Config.Password))
 	}
 
+	args = append(args, "push")
+
 	if p.Config.Spec != "" {
-		spec, err := template.RenderTrim(p.Config.Spec, p)
+		raw, err := ioutil.ReadFile(p.Config.Spec)
 
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to read template")
 		}
 
-		opts = append(opts, command.WithSpec(spec))
+		spec, err := template.RenderTrim(string(raw), p)
+
+		if err != nil {
+			return errors.Wrap(err, "failed to render template")
+		}
+
+		tmpfile, err := ioutil.TempFile(p.Build.Path, "manifest-")
+
+		if err != nil {
+			return errors.Wrap(err, "failed to create tempfile")
+		}
+
+		defer os.Remove(tmpfile.Name())
+
+		if _, err := tmpfile.Write([]byte(spec)); err != nil {
+			return errors.Wrap(err, "failed to write tempfile")
+		}
+
+		if err := tmpfile.Close(); err != nil {
+			return errors.Wrap(err, "failed to close tempfile")
+		}
+
+		args = append(args, "from-spec")
+		args = append(args, tmpfile.Name())
 
 		log.Printf(
 			"pushing by spec",
@@ -88,19 +116,19 @@ func (p *Plugin) Exec() error {
 		if len(p.Config.Platforms) == 0 {
 			return errors.New("you must provide platforms")
 		} else {
-			opts = append(opts, command.WithPlatforms(p.Config.Platforms))
+			args = append(args, fmt.Sprintf("--platforms=%s", strings.Join(p.Config.Platforms, ",")))
 		}
 
 		if p.Config.Target == "" {
 			return errors.New("you must provide a target")
 		} else {
-			opts = append(opts, command.WithTarget(p.Config.Target))
+			args = append(args, fmt.Sprintf("--target=%s", p.Config.Target))
 		}
 
 		if p.Config.Template == "" {
 			return errors.New("you must provide a template")
 		} else {
-			opts = append(opts, command.WithTemplate(p.Config.Template))
+			args = append(args, fmt.Sprintf("--template=%s", p.Config.Template))
 		}
 
 		log.Printf(
@@ -112,12 +140,20 @@ func (p *Plugin) Exec() error {
 	}
 
 	if p.Config.IgnoreMissing {
-		opts = append(opts, command.IgnoreMissing())
+		args = append(args, "--ignore-missing")
 	}
+
+	cmd := exec.Command(
+		"manifest-tool",
+		args...,
+	)
+
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
 	if p.Build.Path != "" {
-		opts = append(opts, command.WithPath(p.Build.Path))
+		cmd.Dir = p.Build.Path
 	}
 
-	return command.New(opts...).Exec()
+	return cmd.Run()
 }
