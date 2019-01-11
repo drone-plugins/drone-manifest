@@ -13,7 +13,7 @@ pipeline:
       - go test -cover ./...
 
   build_linux_amd64:
-    image: golang:1.10
+    image: golang:1.11
     pull: true
     group: build
     environment:
