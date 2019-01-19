@@ -1,4 +1,4 @@
-FROM alpine:3.6 as base
+FROM alpine:3.8 as base
 
 RUN apk add --no-cache curl && \
   curl -sSLo /bin/manifest-tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64 && \
