@@ -21,6 +21,7 @@ func TestDefaultTags(t *testing.T) {
 		// malformed or errors
 		{"refs/tags/x1.0.0", []string{"latest"}},
 		{"v1.0.0", []string{"latest"}},
+		{"refs/tags/v18.06.0", []string{"18", "18.06", "18.06.0"}},
 	}
 
 	for _, test := range tests {
