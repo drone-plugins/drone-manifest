@@ -12,24 +12,31 @@ Drone plugin to push Docker manifest to a registry for multi-architecture mappin
 
 ## Build
 
-Build the binary with the following commands:
+Build the binary with the following command:
 
-```
-go build
+```console
+export GOOS=linux
+export GOARCH=amd64
+export CGO_ENABLED=0
+export GO111MODULE=on
+
+go build -v -a -tags netgo -o release/linux/amd64/drone-manifest
 ```
 
 ## Docker
 
-Build the Docker image with the following commands:
+Build the Docker image with the following command:
 
-```
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a -tags netgo -o release/linux/amd64/drone-manifest
-docker build --rm -t plugins/manifest .
+```console
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.linux.amd64 --tag plugins/manifest .
 ```
 
-### Usage
+## Usage
 
-```
+```console
 docker run --rm \
   -e PLUGIN_PLATFORMS=linux/amd64,linux/arm,linux/arm64 \
   -e PLUGIN_TEMPLATE=organization/project-ARCH:1.0.0 \
