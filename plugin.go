@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 
 	"github.com/drone/drone-template-lib/template"
@@ -59,6 +60,14 @@ type (
 		Config Config
 	}
 )
+
+func mainfestToolPath() string {
+	if runtime.GOOS == "windows" {
+		return "C:/bin/manifest-tool.exe"
+	}
+
+	return "/bin/manifest-tool"
+}
 
 func (p *Plugin) Exec() error {
 	args := []string{}
@@ -144,7 +153,7 @@ func (p *Plugin) Exec() error {
 	}
 
 	cmd := exec.Command(
-		"manifest-tool",
+		mainfestToolPath(),
 		args...,
 	)
 
