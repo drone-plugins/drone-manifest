@@ -5,12 +5,12 @@ name: testing
 platform:
   os: windows
   arch: amd64
-  version: 1803
+  version: 1809
 
 steps:
 - name: vet
   pull: always
-  image: golang:1.12-windowsservercore-1803
+  image: golang:1.12-windowsservercore-1809
   commands:
   - go vet ./...
   environment:
@@ -21,7 +21,7 @@ steps:
 
 - name: test
   pull: always
-  image: golang:1.12-windowsservercore-1803
+  image: golang:1.12-windowsservercore-1809
   commands:
   - go test -cover ./...
   environment:
