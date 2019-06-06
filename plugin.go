@@ -122,6 +122,8 @@ func (p *Plugin) Exec() error {
 			"pushing by spec",
 		)
 	} else {
+		args = append(args, "from-args")
+
 		if len(p.Config.Platforms) == 0 {
 			return errors.New("you must provide platforms")
 		} else {
