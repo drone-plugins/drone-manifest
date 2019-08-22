@@ -66,6 +66,11 @@ func main() {
 			Usage:  "automatically build tags",
 			EnvVar: "PLUGIN_DEFAULT_TAGS,PLUGIN_AUTO_TAG",
 		},
+		cli.BoolFlag{
+			Name:   "dump",
+			Usage:  "dump the spec to stdout for debug purposes",
+			EnvVar: "PLUGIN_DUMP",
+		},
 		cli.StringFlag{
 			Name:   "path",
 			Usage:  "git clone path",
@@ -189,6 +194,7 @@ func run(c *cli.Context) error {
 			Template:      c.String("template"),
 			Spec:          c.String("spec"),
 			IgnoreMissing: c.Bool("ignore-missing"),
+			Dump:          c.Bool("dump"),
 		},
 	}
 

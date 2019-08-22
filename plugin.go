@@ -51,6 +51,7 @@ type (
 		Template      string
 		Spec          string
 		IgnoreMissing bool
+		Dump          bool
 	}
 
 	Plugin struct {
@@ -113,6 +114,10 @@ func (p *Plugin) Exec() error {
 
 		if err := tmpfile.Close(); err != nil {
 			return errors.Wrap(err, "failed to close tempfile")
+		}
+
+		if p.Config.Dump {
+			println(spec)
 		}
 
 		args = append(args, "from-spec")
