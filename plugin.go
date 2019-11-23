@@ -46,6 +46,7 @@ type (
 	Config struct {
 		Username      string
 		Password      string
+		Insecure      bool
 		Platforms     []string
 		Target        string
 		Template      string
@@ -83,6 +84,10 @@ func (p *Plugin) Exec() error {
 		return errors.New("you must provide a password")
 	} else {
 		args = append(args, fmt.Sprintf("--password=%s", p.Config.Password))
+	}
+
+	if p.Config.Insecure {
+		args = append(args, "--insecure")
 	}
 
 	args = append(args, "push")
