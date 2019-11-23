@@ -8,7 +8,7 @@ LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `
   org.label-schema.vendor="Drone.IO Community" `
   org.label-schema.schema-version="1.0"
 
-ENV MANIFEST_TOOL_VERSION 0.9.0
+ENV MANIFEST_TOOL_VERSION 1.0.0
 
 RUN New-Item -ItemType directory -Path 'C:/bin'; `
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
