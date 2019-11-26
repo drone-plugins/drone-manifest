@@ -29,6 +29,11 @@ func main() {
 			Usage:  "password for registry",
 			EnvVar: "PLUGIN_PASSWORD,MANIFEST_PASSWORD,DOCKER_PASSWORD",
 		},
+		cli.BoolFlag{
+			Name:   "insecure",
+			Usage:  "enable allow insecure registry",
+			EnvVar: "PLUGIN_INSECURE",
+		},
 		cli.StringSliceFlag{
 			Name:   "platforms",
 			Usage:  "platforms for manifests",
@@ -189,6 +194,7 @@ func run(c *cli.Context) error {
 		Config: Config{
 			Username:      c.String("username"),
 			Password:      c.String("password"),
+			Insecure:      c.Bool("insecure"),
 			Platforms:     c.StringSlice("platforms"),
 			Target:        c.String("target"),
 			Template:      c.String("template"),
