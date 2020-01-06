@@ -81,7 +81,7 @@ steps:
 
 - name: dryrun
   pull: always
-  image: plugins/docker:linux-amd64
+  image: plugins/docker
   settings:
     daemon_off: false
     dockerfile: docker/Dockerfile.linux.amd64
@@ -98,7 +98,7 @@ steps:
 
 - name: publish
   pull: always
-  image: plugins/docker:linux-amd64
+  image: plugins/docker
   settings:
     auto_tag: true
     auto_tag_suffix: linux-amd64
@@ -165,7 +165,7 @@ steps:
 
 - name: dryrun
   pull: always
-  image: plugins/docker:linux-arm64
+  image: plugins/docker
   settings:
     daemon_off: false
     dockerfile: docker/Dockerfile.linux.arm64
@@ -182,7 +182,7 @@ steps:
 
 - name: publish
   pull: always
-  image: plugins/docker:linux-arm64
+  image: plugins/docker
   settings:
     auto_tag: true
     auto_tag_suffix: linux-arm64
@@ -249,7 +249,7 @@ steps:
 
 - name: dryrun
   pull: always
-  image: plugins/docker:linux-arm
+  image: plugins/docker
   settings:
     daemon_off: false
     dockerfile: docker/Dockerfile.linux.arm
@@ -266,7 +266,7 @@ steps:
 
 - name: publish
   pull: always
-  image: plugins/docker:linux-arm
+  image: plugins/docker
   settings:
     auto_tag: true
     auto_tag_suffix: linux-arm
@@ -304,19 +304,14 @@ steps:
   pull: always
   image: plugins/manifest
   settings:
+    dump: true
+    auto_tag: true
     ignore_missing: true
     password:
       from_secret: docker_password
     spec: docker/manifest.tmpl
     username:
       from_secret: docker_username
-
-- name: microbadger
-  pull: always
-  image: plugins/webhook
-  settings:
-    url:
-      from_secret: microbadger_url
 
 trigger:
   ref:

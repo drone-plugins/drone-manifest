@@ -29,6 +29,11 @@ func main() {
 			Usage:  "password for registry",
 			EnvVar: "PLUGIN_PASSWORD,MANIFEST_PASSWORD,DOCKER_PASSWORD",
 		},
+		cli.BoolFlag{
+			Name:   "insecure",
+			Usage:  "enable allow insecure registry",
+			EnvVar: "PLUGIN_INSECURE",
+		},
 		cli.StringSliceFlag{
 			Name:   "platforms",
 			Usage:  "platforms for manifests",
@@ -65,6 +70,11 @@ func main() {
 			Name:   "tags.auto",
 			Usage:  "automatically build tags",
 			EnvVar: "PLUGIN_DEFAULT_TAGS,PLUGIN_AUTO_TAG",
+		},
+		cli.BoolFlag{
+			Name:   "dump",
+			Usage:  "dump the spec to stdout for debug purposes",
+			EnvVar: "PLUGIN_DUMP",
 		},
 		cli.StringFlag{
 			Name:   "path",
@@ -184,11 +194,13 @@ func run(c *cli.Context) error {
 		Config: Config{
 			Username:      c.String("username"),
 			Password:      c.String("password"),
+			Insecure:      c.Bool("insecure"),
 			Platforms:     c.StringSlice("platforms"),
 			Target:        c.String("target"),
 			Template:      c.String("template"),
 			Spec:          c.String("spec"),
 			IgnoreMissing: c.Bool("ignore-missing"),
+			Dump:          c.Bool("dump"),
 		},
 	}
 

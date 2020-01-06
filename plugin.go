@@ -46,11 +46,13 @@ type (
 	Config struct {
 		Username      string
 		Password      string
+		Insecure      bool
 		Platforms     []string
 		Target        string
 		Template      string
 		Spec          string
 		IgnoreMissing bool
+		Dump          bool
 	}
 
 	Plugin struct {
@@ -72,16 +74,20 @@ func mainfestToolPath() string {
 func (p *Plugin) Exec() error {
 	args := []string{}
 
-	if p.Config.Username == "" {
+	if p.Config.Username == "" && p.Config.Password != "" {
 		return errors.New("you must provide a username")
 	} else {
 		args = append(args, fmt.Sprintf("--username=%s", p.Config.Username))
 	}
 
-	if p.Config.Password == "" {
+	if p.Config.Password == "" && p.Config.Username != "" {
 		return errors.New("you must provide a password")
 	} else {
 		args = append(args, fmt.Sprintf("--password=%s", p.Config.Password))
+	}
+
+	if p.Config.Insecure {
+		args = append(args, "--insecure")
 	}
 
 	args = append(args, "push")
@@ -119,6 +125,10 @@ func (p *Plugin) Exec() error {
 
 		if err := tmpfile.Close(); err != nil {
 			return errors.Wrap(err, "failed to close tempfile")
+		}
+
+		if p.Config.Dump {
+			println(spec)
 		}
 
 		args = append(args, "from-spec")
