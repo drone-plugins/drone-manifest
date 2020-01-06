@@ -93,10 +93,16 @@ func (p *Plugin) Exec() error {
 	args = append(args, "push")
 
 	if p.Config.Spec != "" {
-		raw, err := ioutil.ReadFile(p.Config.Spec)
+		var raw []byte
+		// if spec is not a valid file, assume inlining
+		if _, err := os.Stat(p.Config.Spec); os.IsNotExist(err) {
+			raw = []byte(p.Config.Spec)
+		} else { // otherwise read it
+			raw, err = ioutil.ReadFile(p.Config.Spec)
 
-		if err != nil {
-			return errors.Wrap(err, "failed to read template")
+			if err != nil {
+				return errors.Wrap(err, "failed to read template")
+			}
 		}
 
 		spec, err := template.RenderTrim(string(raw), p)
