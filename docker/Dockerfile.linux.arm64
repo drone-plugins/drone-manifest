@@ -1,4 +1,4 @@
-FROM alpine:3.10 as base
+FROM alpine:3.12 as base
 
 ENV MANIFEST_TOOL_VERSION 1.0.2
 
@@ -16,4 +16,4 @@ LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
 COPY --from=base /bin/manifest-tool /bin/
 
 ADD release/linux/arm64/drone-manifest /bin/
-ENTRYPOINT ["/bin/drone-manifest"]
+ENTRYPOINT [ "/bin/drone-manifest" ]
