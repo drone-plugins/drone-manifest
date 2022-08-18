@@ -6,7 +6,7 @@
 package main
 
 import (
-	"github.com/drone-plugins/drone-manifest/plugin"
+	"github.com/LemontechSA/drone-manifest-ecr/plugin"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,16 +14,34 @@ import (
 func settingsFlags(settings *plugin.Settings) []cli.Flag {
 	return []cli.Flag{
 		&cli.StringFlag{
-			Name:        "username",
+			Name:        "access-key",
 			Usage:       "username for registry",
-			EnvVars:     []string{"PLUGIN_USERNAME", "MANIFEST_USERNAME", "DOCKER_USERNAME"},
-			Destination: &settings.Username,
+			EnvVars:     []string{"PLUGIN_ACCESS_KEY", "ECR_ACCESS_KEY", "AWS_ACCESS_KEY_ID"},
+			Destination: &settings.AccessKey,
 		},
 		&cli.StringFlag{
-			Name:        "password",
+			Name:        "secret-key",
 			Usage:       "password for registry",
-			EnvVars:     []string{"PLUGIN_PASSWORD", "MANIFEST_PASSWORD", "DOCKER_PASSWORD"},
-			Destination: &settings.Password,
+			EnvVars:     []string{"PLUGIN_SECRET_KEY", "ECR_SECRET_KEY", "AWS_SECRET_ACCESS_KEY"},
+			Destination: &settings.SecretKey,
+		},
+		&cli.StringFlag{
+			Name:        "region",
+			Usage:       "password for registry",
+			EnvVars:     []string{"PLUGIN_REGION", "ECR_REGION", "AWS_REGION"},
+			Destination: &settings.Region,
+		},
+		&cli.StringFlag{
+			Name:        "assume-role",
+			Usage:       "password for registry",
+			EnvVars:     []string{"PLUGIN_ASSUME_ROLE"},
+			Destination: &settings.AssumeRole,
+		},
+		&cli.StringFlag{
+			Name:        "external-id",
+			Usage:       "password for registry",
+			EnvVars:     []string{"PLUGIN_EXTERNAL_ID"},
+			Destination: &settings.ExternalId,
 		},
 		&cli.BoolFlag{
 			Name:        "insecure",

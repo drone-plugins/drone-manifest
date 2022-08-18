@@ -10,7 +10,7 @@ package main
 import (
 	"os"
 
-	"github.com/drone-plugins/drone-manifest/plugin"
+	"github.com/LemontechSA/drone-manifest-ecr/plugin"
 	"github.com/drone-plugins/drone-plugin-lib/errors"
 	"github.com/drone-plugins/drone-plugin-lib/urfave"
 	"github.com/joho/godotenv"

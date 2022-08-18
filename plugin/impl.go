@@ -6,6 +6,7 @@
 package plugin
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -15,15 +16,22 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/drone-plugins/drone-manifest/tagging"
+	"github.com/LemontechSA/drone-manifest-ecr/tagging"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/drone/drone-template-lib/template"
 	"github.com/urfave/cli/v2"
 )
 
 // Settings for the plugin.
 type Settings struct {
-	Username      string
-	Password      string
+	AccessKey     string
+	SecretKey     string
+	Region        string
+	AssumeRole    string
+	ExternalId    string
 	Insecure      bool
 	Platforms     cli.StringSlice
 	Target        string
@@ -34,13 +42,15 @@ type Settings struct {
 	AutoTag       bool
 }
 
+const defaultRegion = "us-east-1"
+
 // Validate handles the settings validation of the plugin.
 func (p *Plugin) Validate() error {
-	if p.settings.Username == "" && p.settings.Password != "" {
+	if p.settings.AccessKey == "" && p.settings.AccessKey != "" {
 		return errors.New("you must provide a username")
 	}
 
-	if p.settings.Password == "" && p.settings.Username != "" {
+	if p.settings.SecretKey == "" && p.settings.SecretKey != "" {
 		return errors.New("you must provide a password")
 	}
 
@@ -84,9 +94,37 @@ func (p *Plugin) Execute() error {
 		t.Build.Tags = p.settings.Tags.Value()
 	}
 
+	region := p.settings.Region
+	assumeRole := p.settings.AssumeRole
+	externalId := p.settings.ExternalId
+
+	if region == "" {
+		region = defaultRegion
+	}
+
+	key := p.settings.AccessKey
+	secret := p.settings.SecretKey
+
+	if key != "" && secret != "" {
+		os.Setenv("AWS_ACCESS_KEY_ID", key)
+		os.Setenv("AWS_SECRET_ACCESS_KEY", secret)
+	}
+
+	sess, err := session.NewSession(&aws.Config{Region: &region})
+	if err != nil {
+		log.Fatal(fmt.Sprintf("error creating aws session: %v", err))
+	}
+
+	svc := getECRClient(sess, assumeRole, externalId)
+	username, password, _, err := getAuthInfo(svc)
+
+	if err != nil {
+		log.Fatal(fmt.Sprintf("error getting ECR auth: %v", err))
+	}
+
 	args := []string{
-		fmt.Sprintf("--username=%s", p.settings.Username),
-		fmt.Sprintf("--password=%s", p.settings.Password),
+		fmt.Sprintf("--username=%s", username),
+		fmt.Sprintf("--password=%s", password),
 	}
 
 	if p.settings.Insecure {
@@ -155,6 +193,46 @@ func (p *Plugin) Execute() error {
 	cmd.Stderr = os.Stderr
 
 	return cmd.Run()
+}
+
+func getECRClient(sess *session.Session, role string, externalId string) *ecr.ECR {
+	if role == "" {
+		return ecr.New(sess)
+	}
+	if externalId != "" {
+		return ecr.New(sess, &aws.Config{
+			Credentials: stscreds.NewCredentials(sess, role, func(p *stscreds.AssumeRoleProvider) {
+				p.ExternalID = &externalId
+			}),
+		})
+	} else {
+		return ecr.New(sess, &aws.Config{
+			Credentials: stscreds.NewCredentials(sess, role),
+		})
+	}
+}
+
+func getAuthInfo(svc *ecr.ECR) (username, password, registry string, err error) {
+	var result *ecr.GetAuthorizationTokenOutput
+	var decoded []byte
+
+	result, err = svc.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
+	if err != nil {
+		return
+	}
+
+	auth := result.AuthorizationData[0]
+	token := *auth.AuthorizationToken
+	decoded, err = base64.StdEncoding.DecodeString(token)
+	if err != nil {
+		return
+	}
+
+	registry = strings.TrimPrefix(*auth.ProxyEndpoint, "https://")
+	creds := strings.Split(string(decoded), ":")
+	username = creds[0]
+	password = creds[1]
+	return
 }
 
 func mainfestToolPath() string {
