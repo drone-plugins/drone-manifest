@@ -33,6 +33,7 @@ def testing(ctx):
         'image': 'golang:1.17',
         'pull': 'always',
         'commands': [
+          'go get honnef.co/go/tools/cmd/staticcheck',
           'go run honnef.co/go/tools/cmd/staticcheck ./...',
         ],
         'volumes': [
@@ -47,6 +48,7 @@ def testing(ctx):
         'image': 'golang:1.17',
         'pull': 'always',
         'commands': [
+          'go get golang.org/x/lint/golint',
           'go run golang.org/x/lint/golint -set_exit_status ./...',
         ],
         'volumes': [
