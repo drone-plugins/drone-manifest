@@ -112,14 +112,14 @@ func (p *Plugin) Execute() error {
 
 	sess, err := session.NewSession(&aws.Config{Region: &region})
 	if err != nil {
-		log.Fatal(fmt.Sprintf("error creating aws session: %v", err))
+		log.Fatalf(fmt.Sprintf("error creating aws session: %v", err))
 	}
 
 	svc := getECRClient(sess, assumeRole, externalId)
 	username, password, _, err := getAuthInfo(svc)
 
 	if err != nil {
-		log.Fatal(fmt.Sprintf("error getting ECR auth: %v", err))
+		log.Fatalf(fmt.Sprintf("error getting ECR auth: %v", err))
 	}
 
 	args := []string{
