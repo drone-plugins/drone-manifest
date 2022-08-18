@@ -33,7 +33,7 @@ def testing(ctx):
     'steps': [
       {
         'name': 'staticcheck',
-        'image': 'golang:1.14',
+        'image': 'golang:1.17',
         'pull': 'always',
         'commands': [
           'go run honnef.co/go/tools/cmd/staticcheck ./...',
@@ -47,7 +47,7 @@ def testing(ctx):
       },
       {
         'name': 'lint',
-        'image': 'golang:1.14',
+        'image': 'golang:1.17',
         'pull': 'always',
         'commands': [
           'go run golang.org/x/lint/golint -set_exit_status ./...',
@@ -61,7 +61,7 @@ def testing(ctx):
       },
       {
         'name': 'vet',
-        'image': 'golang:1.14',
+        'image': 'golang:1.17',
         'pull': 'always',
         'commands': [
           'go vet ./...',
@@ -75,7 +75,7 @@ def testing(ctx):
       },
       {
         'name': 'test',
-        'image': 'golang:1.14',
+        'image': 'golang:1.17',
         'pull': 'always',
         'commands': [
           'go test -cover ./...',
@@ -128,11 +128,11 @@ def linux(ctx, arch):
 
   if ctx.build.event == 'tag':
     build = [
-      'go build -v -ldflags "-X main.version=%s" -a -tags netgo -o release/linux/%s/drone-manifest ./cmd/drone-manifest' % (ctx.build.ref.replace("refs/tags/v", ""), arch),
+      'go build -v -ldflags "-X main.version=%s" -a -tags netgo -o release/linux/%s/drone-manifest-ecr ./cmd/drone-manifest-ecr' % (ctx.build.ref.replace("refs/tags/v", ""), arch),
     ]
   else:
     build = [
-      'go build -v -ldflags "-X main.version=%s" -a -tags netgo -o release/linux/%s/drone-manifest ./cmd/drone-manifest' % (ctx.build.commit[0:8], arch),
+      'go build -v -ldflags "-X main.version=%s" -a -tags netgo -o release/linux/%s/drone-manifest-ecr ./cmd/drone-manifest-ecr' % (ctx.build.commit[0:8], arch),
     ]
 
   return {
@@ -146,7 +146,7 @@ def linux(ctx, arch):
     'steps': [
       {
         'name': 'environment',
-        'image': 'golang:1.14',
+        'image': 'golang:1.17',
         'pull': 'always',
         'environment': {
           'CGO_ENABLED': '0',
@@ -158,7 +158,7 @@ def linux(ctx, arch):
       },
       {
         'name': 'build',
-        'image': 'golang:1.14',
+        'image': 'golang:1.17',
         'pull': 'always',
         'environment': {
           'CGO_ENABLED': '0',
@@ -167,10 +167,10 @@ def linux(ctx, arch):
       },
       {
         'name': 'executable',
-        'image': 'golang:1.14',
+        'image': 'golang:1.17',
         'pull': 'always',
         'commands': [
-          './release/linux/%s/drone-manifest --help' % (arch),
+          './release/linux/%s/drone-manifest-ecr --help' % (arch),
         ],
       },
       {
@@ -186,96 +186,6 @@ def linux(ctx, arch):
         'refs/heads/master',
         'refs/tags/**',
         'refs/pull/**',
-      ],
-    },
-  }
-
-def windows(ctx, version):
-  docker = [
-    'echo $env:PASSWORD | docker login --username $env:USERNAME --password-stdin',
-  ]
-
-  if ctx.build.event == 'tag':
-    build = [
-      'go build -v -ldflags "-X main.version=%s" -a -tags netgo -o release/windows/amd64/drone-manifest.exe ./cmd/drone-manifest' % (ctx.build.ref.replace("refs/tags/v", "")),
-    ]
-
-    docker = docker + [
-      'docker build --pull -f docker/Dockerfile.windows.%s -t lemontech/drone-manifest-ecr:%s-windows-%s-amd64 .' % (version, ctx.build.ref.replace("refs/tags/v", ""), version),
-      'docker run --rm lemontech/drone-manifest-ecr:%s-windows-%s-amd64 --help' % (ctx.build.ref.replace("refs/tags/v", ""), version),
-      'docker push lemontech/drone-manifest-ecr:%s-windows-%s-amd64' % (ctx.build.ref.replace("refs/tags/v", ""), version),
-    ]
-  else:
-    build = [
-      'go build -v -ldflags "-X main.version=%s" -a -tags netgo -o release/windows/amd64/drone-manifest.exe ./cmd/drone-manifest' % (ctx.build.commit[0:8]),
-    ]
-
-    docker = docker + [
-      'docker build --pull -f docker/Dockerfile.windows.%s -t lemontech/drone-manifest-ecr:windows-%s-amd64 .' % (version, version),
-      'docker run --rm lemontech/drone-manifest-ecr:windows-%s-amd64 --help' % (version),
-      'docker push lemontech/drone-manifest-ecr:windows-%s-amd64' % (version),
-    ]
-
-  return {
-    'kind': 'pipeline',
-    'type': 'ssh',
-    'name': 'windows-%s' % (version),
-    'platform': {
-      'os': 'windows',
-    },
-    'server': {
-      'host': {
-        'from_secret': 'windows_server_%s' % (version),
-      },
-      'user': {
-        'from_secret': 'windows_username',
-      },
-      'password': {
-        'from_secret': 'windows_password',
-      },
-    },
-    'steps': [
-      {
-        'name': 'environment',
-        'environment': {
-          'CGO_ENABLED': '0',
-        },
-        'commands': [
-          'go version',
-          'go env',
-        ],
-      },
-      {
-        'name': 'build',
-        'environment': {
-          'CGO_ENABLED': '0',
-        },
-        'commands': build,
-      },
-      {
-        'name': 'executable',
-        'commands': [
-          './release/windows/amd64/drone-manifest.exe --help',
-        ],
-      },
-      {
-        'name': 'docker',
-        'environment': {
-          'USERNAME': {
-            'from_secret': 'docker_username',
-          },
-          'PASSWORD': {
-            'from_secret': 'docker_password',
-          },
-        },
-        'commands': docker,
-      },
-    ],
-    'depends_on': [],
-    'trigger': {
-      'ref': [
-        'refs/heads/master',
-        'refs/tags/**',
       ],
     },
   }
