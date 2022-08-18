@@ -1,5 +1,7 @@
 # drone-manifest-ecr
 
+TEST
+
 Drone plugin to push Docker manifest to a AWS ECR for multi-architecture mappings. For the usage information and a listing of the available options please take a look at [the docs](http://plugins.drone.io/drone-plugins/drone-manifest/).
 
 ## Build
