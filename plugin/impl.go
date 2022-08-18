@@ -85,7 +85,7 @@ func (p *Plugin) Execute() error {
 	t.Build.Tag = p.pipeline.Build.Tag
 	if p.settings.AutoTag {
 		if tagging.UseDefaultTag(p.pipeline.Commit.Ref, p.pipeline.Repo.Branch) {
-			t.Build.Tags = tagging.DefaultTags(p.pipeline.Commit.Ref)
+			t.Build.Tags = tagging.DefaultTags(p.pipeline.Commit.Ref, p.pipeline.Commit.SHA)
 		} else {
 			log.Printf("skipping automated tags for %s", p.pipeline.Commit.Ref)
 			return nil
@@ -175,13 +175,38 @@ func (p *Plugin) Execute() error {
 			args,
 			"from-args",
 			fmt.Sprintf("--platforms=%s", strings.Join(p.settings.Platforms.Value(), ",")),
-			fmt.Sprintf("--target=%s", p.settings.Target),
 			fmt.Sprintf("--template=%s", p.settings.Template),
 		)
+
+		if !p.settings.AutoTag {
+			args = append(args, fmt.Sprintf("--target=%s", p.settings.Target))
+		}
 	}
 
 	if p.settings.IgnoreMissing {
 		args = append(args, "--ignore-missing")
+	}
+
+	if p.settings.AutoTag {
+		for _, tag := range t.Build.Tags {
+			args = append(args, fmt.Sprintf("--target=%s", p.settings.Target+":"+tag))
+
+			cmd := exec.Command(
+				mainfestToolPath(),
+				args...,
+			)
+
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+
+			err = cmd.Run()
+
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
 	}
 
 	cmd := exec.Command(

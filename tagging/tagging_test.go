@@ -6,26 +6,28 @@ import (
 )
 
 func TestDefaultTags(t *testing.T) {
+	test_commit_sha := "50a30c312e7c9a50aef7f8c02326aa68a1071dda"
+
 	var tests = []struct {
 		Before string
 		After  []string
 	}{
 		// valid combinations
-		{"", []string{"latest"}},
-		{"refs/heads/master", []string{"latest"}},
-		{"refs/tags/0.9.0", []string{"0.9", "0.9.0"}},
-		{"refs/tags/1.0.0", []string{"1", "1.0", "1.0.0"}},
-		{"refs/tags/v1.0.0", []string{"1", "1.0", "1.0.0"}},
-		{"refs/tags/v1.0.0-alpha.1", []string{"1.0.0-alpha.1"}},
+		{"", []string{test_commit_sha}},
+		{"refs/heads/master", []string{test_commit_sha}},
+		{"refs/tags/0.9.0", []string{test_commit_sha, "latest", "0.9", "0.9.0"}},
+		{"refs/tags/1.0.0", []string{test_commit_sha, "latest", "1", "1.0", "1.0.0"}},
+		{"refs/tags/v1.0.0", []string{test_commit_sha, "latest", "1", "1.0", "1.0.0"}},
+		{"refs/tags/v1.0.0-alpha.1", []string{test_commit_sha, "latest", "1.0.0-alpha.1"}},
 
 		// malformed or errors
-		{"refs/tags/x1.0.0", []string{"latest"}},
-		{"v1.0.0", []string{"latest"}},
-		{"refs/tags/v18.06.0", []string{"18", "18.06", "18.06.0"}},
+		{"refs/tags/x1.0.0", []string{test_commit_sha}},
+		{"v1.0.0", []string{test_commit_sha}},
+		{"refs/tags/v18.06.0", []string{test_commit_sha, "latest", "18", "18.06", "18.06.0"}},
 	}
 
 	for _, test := range tests {
-		got, want := DefaultTags(test.Before), test.After
+		got, want := DefaultTags(test.Before, test_commit_sha), test.After
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("Got tag %v, want %v", got, want)
