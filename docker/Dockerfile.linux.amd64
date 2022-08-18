@@ -15,5 +15,5 @@ LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
 
 COPY --from=base /bin/manifest-tool /bin/
 
-ADD release/linux/amd64/drone-manifest /bin/
-ENTRYPOINT [ "/bin/drone-manifest" ]
+ADD release/linux/amd64/drone-manifest-ecr /bin/
+ENTRYPOINT [ "/bin/drone-manifest-ecr" ]
