@@ -106,7 +106,7 @@ def testing(ctx):
 def linux(ctx, arch):
   docker = {
     'dockerfile': 'docker/Dockerfile.linux.%s' % (arch),
-    'repo': 'plugins/manifest',
+    'repo': 'lemontech/drone-manifest-ecr',
     'username': {
       'from_secret': 'docker_username',
     },
@@ -201,9 +201,9 @@ def windows(ctx, version):
     ]
 
     docker = docker + [
-      'docker build --pull -f docker/Dockerfile.windows.%s -t plugins/manifest:%s-windows-%s-amd64 .' % (version, ctx.build.ref.replace("refs/tags/v", ""), version),
-      'docker run --rm plugins/manifest:%s-windows-%s-amd64 --help' % (ctx.build.ref.replace("refs/tags/v", ""), version),
-      'docker push plugins/manifest:%s-windows-%s-amd64' % (ctx.build.ref.replace("refs/tags/v", ""), version),
+      'docker build --pull -f docker/Dockerfile.windows.%s -t lemontech/drone-manifest-ecr:%s-windows-%s-amd64 .' % (version, ctx.build.ref.replace("refs/tags/v", ""), version),
+      'docker run --rm lemontech/drone-manifest-ecr:%s-windows-%s-amd64 --help' % (ctx.build.ref.replace("refs/tags/v", ""), version),
+      'docker push lemontech/drone-manifest-ecr:%s-windows-%s-amd64' % (ctx.build.ref.replace("refs/tags/v", ""), version),
     ]
   else:
     build = [
@@ -211,9 +211,9 @@ def windows(ctx, version):
     ]
 
     docker = docker + [
-      'docker build --pull -f docker/Dockerfile.windows.%s -t plugins/manifest:windows-%s-amd64 .' % (version, version),
-      'docker run --rm plugins/manifest:windows-%s-amd64 --help' % (version),
-      'docker push plugins/manifest:windows-%s-amd64' % (version),
+      'docker build --pull -f docker/Dockerfile.windows.%s -t lemontech/drone-manifest-ecr:windows-%s-amd64 .' % (version, version),
+      'docker run --rm lemontech/drone-manifest-ecr:windows-%s-amd64 --help' % (version),
+      'docker push lemontech/drone-manifest-ecr:windows-%s-amd64' % (version),
     ]
 
   return {
@@ -288,7 +288,7 @@ def manifest(ctx):
     'steps': [
       {
         'name': 'manifest',
-        'image': 'plugins/manifest',
+        'image': 'lemontech/drone-manifest-ecr',
         'pull': 'always',
         'settings': {
           'auto_tag': 'true',
@@ -318,40 +318,6 @@ def manifest(ctx):
       'ref': [
         'refs/heads/master',
         'refs/tags/**',
-      ],
-    },
-  }]
-
-def gitter(ctx):
-  return [{
-    'kind': 'pipeline',
-    'type': 'docker',
-    'name': 'gitter',
-    'clone': {
-      'disable': True,
-    },
-    'steps': [
-      {
-        'name': 'gitter',
-        'image': 'plugins/gitter',
-        'pull': 'always',
-        'settings': {
-          'webhook': {
-            'from_secret': 'gitter_webhook',
-          }
-        },
-      },
-    ],
-    'depends_on': [
-      'manifest',
-    ],
-    'trigger': {
-      'ref': [
-        'refs/heads/master',
-        'refs/tags/**',
-      ],
-      'status': [
-        'failure',
       ],
     },
   }]
