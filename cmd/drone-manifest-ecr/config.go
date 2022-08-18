@@ -41,7 +41,7 @@ func settingsFlags(settings *plugin.Settings) []cli.Flag {
 			Name:        "external-id",
 			Usage:       "password for registry",
 			EnvVars:     []string{"PLUGIN_EXTERNAL_ID"},
-			Destination: &settings.ExternalId,
+			Destination: &settings.ExternalID,
 		},
 		&cli.BoolFlag{
 			Name:        "insecure",

@@ -31,7 +31,7 @@ type Settings struct {
 	SecretKey     string
 	Region        string
 	AssumeRole    string
-	ExternalId    string
+	ExternalID    string
 	Insecure      bool
 	Platforms     cli.StringSlice
 	Target        string
@@ -96,7 +96,7 @@ func (p *Plugin) Execute() error {
 
 	region := p.settings.Region
 	assumeRole := p.settings.AssumeRole
-	externalId := p.settings.ExternalId
+	externalID := p.settings.ExternalID
 
 	if region == "" {
 		region = defaultRegion
@@ -115,7 +115,7 @@ func (p *Plugin) Execute() error {
 		log.Fatalf(fmt.Sprintf("error creating aws session: %v", err))
 	}
 
-	svc := getECRClient(sess, assumeRole, externalId)
+	svc := getECRClient(sess, assumeRole, externalID)
 	username, password, _, err := getAuthInfo(svc)
 
 	if err != nil {
@@ -195,21 +195,21 @@ func (p *Plugin) Execute() error {
 	return cmd.Run()
 }
 
-func getECRClient(sess *session.Session, role string, externalId string) *ecr.ECR {
+func getECRClient(sess *session.Session, role string, externalID string) *ecr.ECR {
 	if role == "" {
 		return ecr.New(sess)
 	}
-	if externalId != "" {
+	if externalID != "" {
 		return ecr.New(sess, &aws.Config{
 			Credentials: stscreds.NewCredentials(sess, role, func(p *stscreds.AssumeRoleProvider) {
-				p.ExternalID = &externalId
+				p.ExternalID = &externalID
 			}),
 		})
-	} else {
-		return ecr.New(sess, &aws.Config{
-			Credentials: stscreds.NewCredentials(sess, role),
-		})
 	}
+
+	return ecr.New(sess, &aws.Config{
+		Credentials: stscreds.NewCredentials(sess, role),
+	})
 }
 
 func getAuthInfo(svc *ecr.ECR) (username, password, registry string, err error) {
