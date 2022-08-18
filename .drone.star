@@ -208,7 +208,7 @@ def manifest(ctx):
     'steps': [
       {
         'name': 'manifest',
-        'image': 'lemontech/drone-manifest-ecr',
+        'image': 'plugins/manifest',
         'pull': 'always',
         'settings': {
           'auto_tag': 'true',
