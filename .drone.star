@@ -24,7 +24,7 @@ def main(ctx):
 def testing(ctx):
   return [{
     'kind': 'pipeline',
-    'type': 'docker',
+    'type': 'kubernetes',
     'name': 'testing',
     'platform': {
       'os': 'linux',
@@ -137,7 +137,7 @@ def linux(ctx, arch):
 
   return {
     'kind': 'pipeline',
-    'type': 'docker',
+    'type': 'kubernetes',
     'name': 'linux-%s' % (arch),
     'platform': {
       'os': 'linux',
@@ -283,7 +283,7 @@ def windows(ctx, version):
 def manifest(ctx):
   return [{
     'kind': 'pipeline',
-    'type': 'docker',
+    'type': 'kubernetes',
     'name': 'manifest',
     'steps': [
       {
