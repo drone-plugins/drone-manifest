@@ -187,6 +187,17 @@ def linux(ctx, arch):
         'refs/pull/**',
       ],
     },
+    'node_selector': {
+      'kubernetes.io/arch': arch,
+    },
+    'tolerations': [
+      {
+        'key': 'node/arch',
+        'operator': 'Equal',
+        'value': arch,
+        'effect': 'NoSchedule'
+      },
+    ],
   }
 
 def manifest(ctx):
@@ -209,16 +220,6 @@ def manifest(ctx):
           },
           'spec': 'docker/manifest.tmpl',
           'ignore_missing': 'true',
-        },
-      },
-      {
-        'name': 'microbadger',
-        'image': 'plugins/webhook',
-        'pull': 'always',
-        'settings': {
-          'urls': {
-            'from_secret': 'microbadger_url',
-          },
         },
       },
     ],

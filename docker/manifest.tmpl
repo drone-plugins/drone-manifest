@@ -17,28 +17,3 @@ manifests:
       architecture: arm64
       os: linux
       variant: v8
-  - image: lemontech/drone-manifest-ecr:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}linux-arm
-    platform:
-      architecture: arm
-      os: linux
-      variant: v7
-  - image: lemontech/drone-manifest-ecr:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}windows-2004-amd64
-    platform:
-      architecture: amd64
-      os: windows
-      version: 2004
-  - image: lemontech/drone-manifest-ecr:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}windows-1909-amd64
-    platform:
-      architecture: amd64
-      os: windows
-      version: 1909
-  - image: lemontech/drone-manifest-ecr:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}windows-1903-amd64
-    platform:
-      architecture: amd64
-      os: windows
-      version: 1903
-  - image: lemontech/drone-manifest-ecr:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}windows-1809-amd64
-    platform:
-      architecture: amd64
-      os: windows
-      version: 1809
