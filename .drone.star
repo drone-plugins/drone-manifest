@@ -9,7 +9,7 @@ def main(ctx):
     windows(ctx, '1809'),
   ]
 
-  after = manifest(ctx) + gitter(ctx)
+  after = manifest(ctx)
 
   for b in before:
     for s in stages:
