@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: drone-manifest-ecr
+  annotations:
+    github.com/project-slug: LemontechSA/drone-manifest-ecr
+spec:
+  type: other
+  lifecycle: unknown
+  owner: devops
