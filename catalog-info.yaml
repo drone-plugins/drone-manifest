@@ -4,6 +4,7 @@ metadata:
   name: drone-manifest-ecr
   annotations:
     github.com/project-slug: LemontechSA/drone-manifest-ecr
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: other
   lifecycle: unknown
