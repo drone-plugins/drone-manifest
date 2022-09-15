@@ -46,6 +46,7 @@ type (
 	Config struct {
 		Username      string
 		Password      string
+		Publicecr     bool
 		Insecure      bool
 		Platforms     []string
 		Target        string
@@ -74,10 +75,14 @@ func mainfestToolPath() string {
 func (p *Plugin) Exec() error {
 	args := []string{}
 
-	if p.Config.Username == "" && p.Config.Password != "" {
-		return errors.New("you must provide a username")
+	if !p.Config.Publicecr {
+		if p.Config.Username == "" && p.Config.Password != "" {
+			return errors.New("you must provide a username")
+		} else {
+			args = append(args, fmt.Sprintf("--username=%s", p.Config.Username))
+		}
 	} else {
-		args = append(args, fmt.Sprintf("--username=%s", p.Config.Username))
+		args = append(args, "--docker-cfg='/root/.docker'")
 	}
 
 	if p.Config.Password == "" && p.Config.Username != "" {
