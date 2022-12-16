@@ -1,4 +1,12 @@
 # escape=`
+FROM mcr.microsoft.com/windows/servercore:ltsc2022 as download
+
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+RUN mkdir C:\app
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 ; `
+    Invoke-WebRequest 'https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-windows-amd64.exe' -OutFile 'c:\app\manifest-tool.exe'
+
 FROM plugins/base:windows-ltsc2022-amd64@sha256:0f90d5bceb432f1ee6f93cf44eed6a38c322834edd55df8a6648c9e6f15131f4
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
@@ -8,9 +16,7 @@ LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `
   org.label-schema.vendor="Drone.IO Community" `
   org.label-schema.schema-version="1.0"
 
-RUN New-Item -ItemType directory -Path 'C:/bin'; `
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; `
-    Invoke-WebRequest ('https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-windows-amd64.exe' -OutFile 'C:/bin/manifest-tool.exe';
+COPY --from=download /app/manifest-tool.exe C:/bin/docker.exe
 
 ADD release/windows/amd64/drone-manifest.exe C:/bin/drone-manifest.exe
 ENTRYPOINT [ "C:\\bin\\drone-manifest.exe" ]
