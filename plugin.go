@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+
 	"log"
 	"os"
 	"os/exec"
@@ -98,7 +98,7 @@ func (p *Plugin) Exec() error {
 		if _, err := os.Stat(p.Config.Spec); os.IsNotExist(err) {
 			raw = []byte(p.Config.Spec)
 		} else { // otherwise read it
-			raw, err = ioutil.ReadFile(p.Config.Spec)
+			raw, err = os.ReadFile(p.Config.Spec)
 
 			if err != nil {
 				return errors.Wrap(err, "failed to read template")
@@ -111,7 +111,7 @@ func (p *Plugin) Exec() error {
 			return errors.Wrap(err, "failed to render template")
 		}
 
-		tmpfile, err := ioutil.TempFile(p.Build.Path, "manifest-")
+		tmpfile, err := os.CreateTemp(p.Build.Path, "manifest-")
 
 		if err != nil {
 			return errors.Wrap(err, "failed to create tempfile")
