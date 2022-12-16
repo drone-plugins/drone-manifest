@@ -234,7 +234,7 @@ pool:
 
 steps:
   - name: manifest
-    image: plugins/manifest
+    image: plugins/manifest:linux-amd64
     settings:
       auto_tag: "true"
       username:
