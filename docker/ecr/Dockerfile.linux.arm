@@ -1,0 +1,4 @@
+FROM plugins/manifest:linux-arm
+
+ADD release/linux/arm/manifest-ecr /bin/
+ENTRYPOINT ["/bin/manifest-ecr"]
