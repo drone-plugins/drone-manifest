@@ -1,4 +1,4 @@
-FROM plugins/manifest:linux-amd64
+FROM plugins/manifest:linux-arm64
 
 ADD release/linux/amd64/manifest-ecr /bin/
 ENTRYPOINT ["/bin/manifest-ecr"]
