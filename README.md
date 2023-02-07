@@ -21,7 +21,7 @@ export CGO_ENABLED=0
 export GO111MODULE=on
 
 go build -v -a -tags netgo -o release/linux/amd64/drone-manifest
-go build -v -a -tags netgo -o release/linux/amd64/manifest-ecr
+go build -v -a -tags netgo -o release/linux/amd64/manifest-ecr ./cmd/manifest-ecr
 ```
 
 ## Docker
