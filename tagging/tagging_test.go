@@ -6,7 +6,7 @@ import (
 )
 
 func TestDefaultTags(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		Before string
 		After  []string
 	}{
@@ -102,7 +102,7 @@ func Test_stripHeadPrefix(t *testing.T) {
 }
 
 func Test_stripTagPrefix(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		Before string
 		After  string
 	}{
