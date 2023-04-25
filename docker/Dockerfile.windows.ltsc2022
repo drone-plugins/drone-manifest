@@ -6,7 +6,5 @@ LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `
   org.label-schema.vendor="Drone.IO Community" `
   org.label-schema.schema-version="1.0"
 
-COPY --from=download /app/manifest-tool.exe C:/bin/docker.exe
-
 ADD release/windows/amd64/drone-manifest.exe C:/bin/drone-manifest.exe
 ENTRYPOINT [ "C:\\bin\\drone-manifest.exe" ]
