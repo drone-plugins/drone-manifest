@@ -9,7 +9,7 @@ pool:
 
 steps:
   - name: lint
-    image: golang:1.19
+    image: golang:1.20
     pull: always
     commands:
       - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
@@ -19,7 +19,7 @@ steps:
       - name: gopath
         path: "/go"
   - name: test
-    image: golang:1.19
+    image: golang:1.20
     commands:
       - go test -cover ./...
     volumes:
@@ -46,7 +46,7 @@ pool:
 
 steps:
   - name: environment
-    image: golang:1.19
+    image: golang:1.20
     pull: always
     environment:
       CGO_ENABLED: "0"
@@ -54,7 +54,7 @@ steps:
       - go version
       - go env
   - name: build
-    image: golang:1.19
+    image: golang:1.20
     environment:
       CGO_ENABLED: "0"
     commands:
@@ -70,6 +70,20 @@ steps:
         from_secret: docker_password
       auto_tag: true
       auto_tag_suffix: linux-amd64
+    when:
+      ref:
+        - refs/heads/master
+        - refs/tags/**
+  - name: docker-dry-run
+    image: plugins/docker
+    settings:
+      dockerfile: docker/Dockerfile.linux.amd64
+      repo: plugins/manifest
+      dry_run: true
+      tags: linux-amd64
+    when:
+      ref:
+        - refs/pull/**
 depends_on:
   - testing
 trigger:
@@ -90,7 +104,7 @@ pool:
 
 steps:
   - name: environment
-    image: golang:1.19
+    image: golang:1.20
     pull: always
     environment:
       CGO_ENABLED: "0"
@@ -98,7 +112,7 @@ steps:
       - go version
       - go env
   - name: build
-    image: golang:1.19
+    image: golang:1.20
     environment:
       CGO_ENABLED: "0"
     commands:
@@ -114,6 +128,20 @@ steps:
         from_secret: docker_password
       auto_tag: true
       auto_tag_suffix: linux-arm64
+    when:
+      ref:
+        - refs/heads/master
+        - refs/tags/**
+  - name: docker-dry-run
+    image: plugins/docker
+    settings:
+      dockerfile: docker/Dockerfile.linux.arm64
+      repo: plugins/manifest
+      dry_run: true
+      tags: linux-arm64
+    when:
+      ref:
+        - refs/pull/**
 depends_on:
   - testing
 trigger:
@@ -134,7 +162,7 @@ pool:
 
 steps:
   - name: environment
-    image: golang:1.19
+    image: golang:1.20
     pull: always
     environment:
       CGO_ENABLED: "0"
@@ -142,7 +170,7 @@ steps:
       - go version
       - go env
   - name: build
-    image: golang:1.19
+    image: golang:1.20
     environment:
       CGO_ENABLED: "0"
     commands:
@@ -184,7 +212,7 @@ pool:
 
 steps:
   - name: environment
-    image: golang:1.19
+    image: golang:1.20
     pull: always
     environment:
       CGO_ENABLED: "0"
@@ -192,7 +220,7 @@ steps:
       - go version
       - go env
   - name: build
-    image: golang:1.19
+    image: golang:1.20
     environment:
       CGO_ENABLED: "0"
     commands:
