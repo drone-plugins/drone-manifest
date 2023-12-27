@@ -9,7 +9,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -139,7 +138,7 @@ func (p *Plugin) Execute() error {
 		if _, err := os.Stat(p.settings.Spec); os.IsNotExist(err) {
 			raw = []byte(p.settings.Spec)
 		} else { // otherwise read it
-			raw, err = ioutil.ReadFile(p.settings.Spec)
+			raw, err = os.ReadFile(p.settings.Spec)
 
 			if err != nil {
 				return fmt.Errorf("failed to read template: %w", err)
@@ -152,7 +151,7 @@ func (p *Plugin) Execute() error {
 			return fmt.Errorf("failed to render template: %w", err)
 		}
 
-		tmpfile, err := ioutil.TempFile("", "manifest-")
+		tmpfile, err := os.CreateTemp("", "manifest-")
 
 		if err != nil {
 			return fmt.Errorf("failed to create tempfile: %w", err)
