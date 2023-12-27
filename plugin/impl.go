@@ -187,26 +187,22 @@ func (p *Plugin) Execute() error {
 		args = append(args, "--ignore-missing")
 	}
 
-	if p.settings.AutoTag {
-		for _, tag := range t.Build.Tags {
-			args = append(args, fmt.Sprintf("--target=%s", p.settings.Target+":"+tag))
+	for _, tag := range t.Build.Tags {
+		args = append(args, fmt.Sprintf("--target=%s", p.settings.Target+":"+tag))
 
-			cmd := exec.Command(
-				mainfestToolPath(),
-				args...,
-			)
+		cmd := exec.Command(
+			mainfestToolPath(),
+			args...,
+		)
 
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 
-			err = cmd.Run()
+		err = cmd.Run()
 
-			if err != nil {
-				return err
-			}
+		if err != nil {
+			return err
 		}
-
-		return nil
 	}
 
 	cmd := exec.Command(
