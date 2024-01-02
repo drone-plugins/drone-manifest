@@ -3,10 +3,12 @@ module github.com/drone-plugins/drone-manifest
 go 1.20
 
 require (
+	github.com/aws/aws-sdk-go v1.44.167
 	github.com/coreos/go-semver v0.3.1
 	github.com/drone/drone-go v1.7.1
 	github.com/drone/drone-template-lib v1.0.0
 	github.com/estesp/manifest-tool/v2 v2.0.8
+	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/opencontainers/image-spec v1.1.0-rc2
 	github.com/sirupsen/logrus v1.9.0
@@ -27,6 +29,7 @@ require (
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/huandu/xstrings v1.2.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/moby/locker v1.0.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
