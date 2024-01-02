@@ -8,7 +8,7 @@ require (
 	github.com/drone/drone-go v1.7.1
 	github.com/drone/drone-template-lib v1.0.1-0.20201006172840-a58a3f26ebca
 	github.com/estesp/manifest-tool/v2 v2.0.8
-	github.com/joho/godotenv v1.4.0
+	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/opencontainers/image-spec v1.1.0-rc2
 	github.com/sirupsen/logrus v1.9.0
