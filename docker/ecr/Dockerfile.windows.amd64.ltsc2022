@@ -1,0 +1,5 @@
+# escape=`
+FROM plugins/manifest:windows-ltsc2022-amd64
+
+ADD release/windows/amd64/manifest-ecr.exe C:/bin/manifest-ecr.exe
+ENTRYPOINT [ "C:\\bin\\manifest-ecr.exe" ]
