@@ -1,4 +1,12 @@
-FROM plugins/base:multiarch
+FROM alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc AS certificates
+RUN apk add --no-cache 'ca-certificates>=20261020-r0'
+
+FROM --platform=linux/amd64 plugins/base:multiarch@sha256:5f8ee491ed20a4333899b43624e30232a02b450f7f0ce0bd4797e22216ebe579 AS base
+
+FROM scratch
+COPY --from=base /etc/mime.types /etc/mime.types
+COPY --from=certificates /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+ENV GODEBUG=netdns=go
 
 LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
   org.label-schema.name="Drone Manifest" \

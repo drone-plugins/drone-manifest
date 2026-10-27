@@ -35,7 +35,7 @@ pipeline:
                   identifier: Lint
                   spec:
                     connectorRef: Plugins_Docker_Hub_Connector
-                    image: golang:1.20
+                    image: golang:1.26.10@sha256:24a707af49702fa44f02785475d02fb752f6982d3e9c0afb7696e1f0204e7ce9
                     shell: Sh
                     command: |-
                       go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
@@ -47,7 +47,7 @@ pipeline:
                   identifier: Run_1
                   spec:
                     connectorRef: Plugins_Docker_Hub_Connector
-                    image: golang:1.20
+                    image: golang:1.26.10@sha256:24a707af49702fa44f02785475d02fb752f6982d3e9c0afb7696e1f0204e7ce9
                     shell: Sh
                     command: go test -cover ./...
         description: ""
@@ -75,7 +75,7 @@ pipeline:
                       type: Run
                       spec:
                         connectorRef: Plugins_Docker_Hub_Connector
-                        image: golang:1.20
+                        image: golang:1.26.10@sha256:24a707af49702fa44f02785475d02fb752f6982d3e9c0afb7696e1f0204e7ce9
                         shell: Sh
                         command: |-
                           # force go modules
@@ -148,7 +148,7 @@ pipeline:
                       type: Run
                       spec:
                         connectorRef: Plugins_Docker_Hub_Connector
-                        image: golang:1.20
+                        image: golang:1.26.10@sha256:24a707af49702fa44f02785475d02fb752f6982d3e9c0afb7696e1f0204e7ce9
                         shell: Sh
                         command: |-
                           # force go modules
@@ -216,20 +216,15 @@ pipeline:
                       spec:
                         connectorRef: Plugins_Docker_Hub_Connector
                         image: golang:1.20
-                        shell: Sh
+                        shell: Powershell
                         command: |-
-                          # force go modules
-                          export GOPATH=""
-
-                          # disable cgo
-                          export CGO_ENABLED=0
-
-                          set -e
-                          set -x
-
-                          # Windows
-                          GOOS=windows
+                          $ErrorActionPreference = "Stop"
+                          . ./scripts/setup-go-windows.ps1
+                          $env:GOPATH = ''
+                          $env:CGO_ENABLED = '0'
+                          $env:GOOS = 'windows'
                           go build -v -a -tags netgo -o release/windows/amd64/drone-manifest.exe .
+                          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
                       when:
                         stageStatus: Success
                   - step:
@@ -297,7 +292,7 @@ pipeline:
                       type: Run
                       spec:
                         connectorRef: Plugins_Docker_Hub_Connector
-                        image: golang:1.20
+                        image: golang:1.26.10-windowsservercore-ltsc2022@sha256:c3eadda68ea666345f08d09104362a03a255e7ae1ff42d1b3897f4dbd698e222
                         shell: Sh
                         command: |-
                           # force go modules
